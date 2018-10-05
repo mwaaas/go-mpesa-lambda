@@ -20,7 +20,7 @@
   - name: zip app
     shell: "zip -j {{src_code}} ./dist/main"
 
-  - name: tesing aws-lambda role
+  - name: creating mpesa lambda
     include_role:
       name: aws-lambda
     vars:
