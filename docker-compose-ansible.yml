@@ -4,6 +4,10 @@ services:
     build:
       context: .
       dockerfile: AnsibleDockerfile
+    environment:
+      - "ConsumerKey=${ConsumerKey}"
+      - "ConsumerSecret=${ConsumerSecret}"
+      - "SafaricomProd=${SafaricomProd}"
     volumes:
       - $HOME/.ssh:/root/.ssh
       - $HOME/.aws:/root/.aws
