@@ -59,8 +59,8 @@
     vars:
       ShortCode: 796529
       ResponseType: Completed
-      ConfirmationURL: "{{domain_ame}}/{{env}}/{{stack_name}}"
-      ConsumerKey: "{{ lookup('env','ConsumerKey') }} "
+      ConfirmationURL: "https://{{domain_ame}}/{{env}}/{{stack_name}}"
+      ConsumerKey: "{{ lookup('env','ConsumerKey') }}"
       ConsumerSecret: "{{ lookup('env','ConsumerSecret') }}"
       SafaricomProd: "{{ lookup('env','SafaricomProd') }}"
     when: env == 'production'
