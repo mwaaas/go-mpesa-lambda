@@ -49,10 +49,6 @@
             CertificateArn: "arn:aws:acm:eu-west-1:354955808555:certificate/b3e00694-2693-4595-8d30-df9c9ac0a4ed"
             DomainName: "{{domain_ame}}"
 
-  - debug: msg="ConsumerKey={{ lookup('env','ConsumerKey') }}"
-  - debug: msg="ConsumerSecret={{ lookup('env','ConsumerSecret') }}"
-  - debug: msg="SafaricomProd={{ lookup('env','SafaricomProd') }}"
-
   - name: register c2b url in production
     include_role:
       name: mpesa
