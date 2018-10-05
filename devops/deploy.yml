@@ -14,6 +14,7 @@
     s3_bucket_name: "{{ s3_stack_name }}"
     src_code: "{{ app_version }}_{{ stack_name }}.zip"
     stack_name_gateway: "{{ stack_name }}-gateway"
+    domain_ame: "mpesa.tumacredo.com"
 
 
   tasks:
@@ -46,4 +47,17 @@
             RestApiName: "{{ stack_name }}"
             LambdaStack: "{{ stack_name }}"
             CertificateArn: "arn:aws:acm:eu-west-1:354955808555:certificate/b3e00694-2693-4595-8d30-df9c9ac0a4ed"
-            DomainName: "mpesa.tumacredo.com"
+            DomainName: "{{domain_ame}}"
+
+  - name: register c2b url in production
+    include_role:
+      name: mpesa
+    vars:
+      ShortCode: 796529
+      ResponseType: Completed
+      ConfirmationURL: "{{domain_ame}}/{{env}}/{{stack_name}}"
+      ConsumerKey: "{{ lookup('env','ConsumerKey') }} "
+      ConsumerSecret: "{{ lookup('env','ConsumerSecret') }}"
+      SafaricomProd: "{{ lookup('env','SafaricomProd') }}"
+    when: env == 'production'
+

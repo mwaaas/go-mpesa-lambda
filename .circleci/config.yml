@@ -1,0 +1,37 @@
+
+version: 2
+
+defaults: &defaults
+  machine:
+    image: circleci/classic:201708-01
+
+  working_directory: ~/go-mpesa-lambda
+
+aws_setup: &aws_setup
+  run:
+    name: configure aws
+    command: |
+      sudo AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY ./aws_credentials.sh
+
+jobs:
+  deploy:
+    <<: *defaults
+
+    steps:
+      - checkout
+      - *aws_setup
+      - run:
+          name: Running tests
+          command: |
+            make deploy debug=true profile=default env=production
+
+
+workflows:
+  version: 2
+  ci:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only:
+              - master
