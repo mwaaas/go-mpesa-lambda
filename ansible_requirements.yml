@@ -5,5 +5,5 @@
 
 - src: https://github.com/mwaaas/mpesa-ansible
   scm: git
-  version: v1.0.0
-  name: mpesa-ansible
+#  version: v1.0.0
+  name: mpesa
