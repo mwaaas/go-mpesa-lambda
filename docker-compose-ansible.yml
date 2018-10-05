@@ -1,0 +1,10 @@
+version: "3"
+services:
+  ansible:
+    build:
+      context: .
+      dockerfile: AnsibleDockerfile
+    volumes:
+      - $HOME/.ssh:/root/.ssh
+      - $HOME/.aws:/root/.aws
+      - ./:/usr/src/app

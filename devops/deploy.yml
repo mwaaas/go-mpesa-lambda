@@ -1,0 +1,49 @@
+---
+- hosts: all
+  connection: local
+  gather_facts: no
+  vars:
+    aws_tags:
+      Owner: engineeringke
+      Environment: development
+      Classification: restricted
+      Status: active
+    region: "eu-west-1"
+    stack_name: "tumacredo-mpesa"
+    s3_stack_name: "{{ stack_name }}-s3"
+    s3_bucket_name: "{{ s3_stack_name }}"
+    src_code: "{{ app_version }}_{{ stack_name }}.zip"
+    stack_name_gateway: "{{ stack_name }}-gateway"
+
+
+  tasks:
+  - name: zip app
+    shell: "zip -j {{src_code}} ./dist/main"
+
+  - name: tesing aws-lambda role
+    include_role:
+      name: aws-lambda
+    vars:
+      aws_lambda:
+        s3:
+          stack_name: "{{ s3_stack_name }}"
+          stack_properties:
+          - name: BucketName
+            value: "{{ s3_bucket_name }}"
+        lambda:
+          stack_name: "{{ stack_name }}"
+          stack_properties: {}
+          template_parameters:
+            Runtime: go1.x
+            MemorySize: 128
+            S3Stack: "{{ s3_stack_name }}"
+            S3Key: "{{ src_code }}"
+            Version: "{{app_version}}"
+        gateway:
+          stack_name: "{{ stack_name_gateway }}"
+          stack_properties: {}
+          template_parameters:
+            RestApiName: "{{ stack_name }}"
+            LambdaStack: "{{ stack_name }}"
+            CertificateArn: "arn:aws:acm:eu-west-1:354955808555:certificate/b3e00694-2693-4595-8d30-df9c9ac0a4ed"
+            DomainName: "mpesa.tumacredo.com"

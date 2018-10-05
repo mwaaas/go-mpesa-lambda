@@ -1,0 +1,9 @@
+- src: https://github.com/mwaaas/aws-lambda
+  scm: git
+#  version: 0.0.1
+  name: aws-lambda
+
+- src: https://github.com/mwaaas/mpesa-ansible
+  scm: git
+  version: v1.0.0
+  name: mpesa-ansible
