@@ -21,7 +21,7 @@ func TestSendRequest(t *testing.T) {
 	response, statusCode, err := sendRequest(
 		ServiceConfig{
 			contentType: "multipart/form-data",
-			serviceUrl:  url.URL{Scheme: "http", Host: "localhost:8009", Path: "post"},
+			serviceUrl:  url.URL{Scheme: "http", Host: "httpbin", Path: "post"},
 		},
 		payload)
 
