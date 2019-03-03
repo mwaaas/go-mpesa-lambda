@@ -33,10 +33,10 @@ func TestSendRequest(t *testing.T) {
 
 func TestHandler(t *testing.T) {
 	body := map[string]string{
-		"BillRefNumber": "mwasdorcas.sla",
-		"TransID":       "NC3697Q9P0_1234",
+		"BillRefNumber": " mwasdorcas.sla ",
+		"TransID":       "NC3697Q9P0_1214",
 		"TransAmount":   "5",
-		"MSISDN":        "254703488092",
+		"MSISDN":        "254702729654",
 	}
 	jsonString, _ := json.Marshal(body)
 

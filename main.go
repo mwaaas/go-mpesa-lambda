@@ -40,11 +40,10 @@ var (
 Get the mpesa service to send the transaction
 */
 func getMpesaRecipientService(suffixAccount string) (ServiceConfig, error) {
-
 	if serviceUrl, ok := services[suffixAccount]; ok {
 		return serviceUrl, nil
 	}
-	return ServiceConfig{}, errors.New("N")
+	return ServiceConfig{}, errors.New("no service found for account " + suffixAccount)
 }
 
 func sendRequest(serviceConfig ServiceConfig, body map[string]interface{}) (map[string]interface{}, int, error) {
@@ -116,6 +115,8 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	// get BillRefNumber
 	billRefNumber := jsonBody["BillRefNumber"].(string)
+	billRefNumber = strings.TrimSpace(billRefNumber)
+	jsonBody["BillRefNumber"] = billRefNumber
 
 	// get suffix account
 	billRefAsArray := strings.Split(billRefNumber, ".")
@@ -131,10 +132,10 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	// Setting mpesa details
 	jsonBody["mpesa_account_name"] = billRefNumber
-	jsonBody["mpesa_code"] = jsonBody["TransID"]
-	jsonBody["mpesa_id"] = jsonBody["TransID"]
-	jsonBody["mpesa_amount"] = jsonBody["TransAmount"]
-	jsonBody["mpesa_sender_number"] = jsonBody["MSISDN"]
+	jsonBody["mpesa_code"] = strings.TrimSpace(jsonBody["TransID"].(string))
+	jsonBody["mpesa_id"] = string(jsonBody["TransID"].(string))
+	jsonBody["mpesa_amount"] = string(jsonBody["TransAmount"].(string))
+	jsonBody["mpesa_sender_number"] = string(jsonBody["MSISDN"].(string))
 
 	log.Print("sending request url: ", serviceConfig, " body: ", jsonBody)
 	response, statusCode, err := sendRequest(serviceConfig, jsonBody)
