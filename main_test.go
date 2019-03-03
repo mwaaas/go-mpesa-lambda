@@ -11,19 +11,23 @@ func TestGettingRecipientService(t *testing.T) {
 	serviceUrl, err := getMpesaRecipientService("sla")
 
 	assert.Equal(t, err, nil)
-	assert.Equal(t, serviceUrl.Host, "www.tumacredo.com")
-	assert.Equal(t, serviceUrl.Scheme, "https")
-	assert.Equal(t, serviceUrl.Path, "api_v1/billing/")
+	assert.Equal(t, serviceUrl.serviceUrl.Host, "www.tumacredo.com")
+	assert.Equal(t, serviceUrl.serviceUrl.Scheme, "https")
+	assert.Equal(t, serviceUrl.serviceUrl.Path, "api_v1/billing/")
 }
 
 func TestSendRequest(t *testing.T) {
+	payload := map[string]interface{}{"foo": "bar"}
 	response, statusCode, err := sendRequest(
-		url.URL{Scheme: "http", Host: "httpbin", Path: "/post"},
-		"name")
+		ServiceConfig{
+			contentType: "multipart/form-data",
+			serviceUrl:  url.URL{Scheme: "http", Host: "localhost:8009", Path: "post"},
+		},
+		payload)
 
 	assert.Equal(t, 200, statusCode)
 	assert.Equal(t, err, nil)
-	assert.Equal(t, "\"name\"", response["data"])
+	assert.Equal(t, payload, response["form"])
 }
 
 func TestHandler(t *testing.T) {

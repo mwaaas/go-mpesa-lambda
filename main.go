@@ -8,21 +8,30 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
 )
 
+type ServiceConfig struct {
+	serviceUrl  url.URL
+	contentType string
+}
+
 var (
 	// ErrNameNotProvided is thrown when a name is not provided
 	ErrNameNotProvided = errors.New("no name was provided in the HTTP body")
 
-	services = map[string]url.URL{
+	services = map[string]ServiceConfig{
 		"sla": {
-			Host:   "www.tumacredo.com",
-			Path:   "api_v1/billing/",
-			Scheme: "https",
+			contentType: "multipart/form-data",
+			serviceUrl: url.URL{
+				Host:   "www.tumacredo.com",
+				Path:   "api_v1/billing/",
+				Scheme: "https",
+			},
 		},
 	}
 )
@@ -30,27 +39,45 @@ var (
 /*
 Get the mpesa service to send the transaction
 */
-func getMpesaRecipientService(suffixAccount string) (url.URL, error) {
+func getMpesaRecipientService(suffixAccount string) (ServiceConfig, error) {
 
 	if serviceUrl, ok := services[suffixAccount]; ok {
 		return serviceUrl, nil
 	}
-	return url.URL{}, errors.New("N")
+	return ServiceConfig{}, errors.New("N")
 }
 
-func sendRequest(url url.URL, body interface{}) (map[string]interface{}, int, error) {
+func sendRequest(serviceConfig ServiceConfig, body map[string]interface{}) (map[string]interface{}, int, error) {
 
 	client := http.Client{
 		Timeout: time.Duration(5 * time.Second),
 	}
 
-	bytesRepresentation, err := json.Marshal(body)
-	if err != nil {
-		return nil, -1, err
+	var requestBody *bytes.Buffer
+
+	if serviceConfig.contentType == "multipart/form-data" {
+		requestBody = &bytes.Buffer{}
+		writer := multipart.NewWriter(requestBody)
+		serviceConfig.contentType = writer.FormDataContentType()
+		for k, v := range body {
+			err := writer.WriteField(k, v.(string))
+			if err != nil {
+				return nil, -1, err
+			}
+		}
+		_ = writer.Close()
+	} else {
+		bytesRepresentation, err := json.Marshal(body)
+		if err != nil {
+			return nil, -1, err
+		}
+
+		requestBody = bytes.NewBuffer(bytesRepresentation)
 	}
 
 	// now forward the request to the mpesa service account
-	resp, err := client.Post(url.String(), "application/json", bytes.NewBuffer(bytesRepresentation))
+	resp, err := client.Post(serviceConfig.serviceUrl.String(),
+		serviceConfig.contentType, requestBody)
 
 	if err != nil {
 		return nil, -1, err
@@ -58,7 +85,6 @@ func sendRequest(url url.URL, body interface{}) (map[string]interface{}, int, er
 	defer resp.Body.Close()
 
 	var result map[string]interface{}
-
 	err = json.NewDecoder(resp.Body).Decode(&result)
 
 	return result, resp.StatusCode, err
