@@ -6,3 +6,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./:/usr/src/app
+
+  httpbin:
+    image: kennethreitz/httpbin
+    ports:
+      - 8009:80

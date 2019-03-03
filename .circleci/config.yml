@@ -21,7 +21,11 @@ jobs:
       - checkout
       - *aws_setup
       - run:
-          name: Running tests
+          name: tests
+          command: |
+            make test
+      - run:
+          name: Deploy
           command: |
             make deploy debug=true profile=default env=production
 

@@ -9,6 +9,9 @@ compile:
 build_ansible:
 	docker-compose -f docker-compose-ansible.yml build ansible
 
+test:
+	docker-compose run app go test -v
+
 deploy: compile build_ansible
 	docker-compose -f docker-compose-ansible.yml run \
 	ansible ansible-playbook devops/deploy.yml \

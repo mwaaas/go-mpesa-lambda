@@ -1,5 +1,3 @@
-github.com/AndroidStudyOpenSource/mpesa-api-go v0.0.0-20180816092044-d8cf14ef35d3 h1:T97bnmCdcwF2i6/Ysc/DCATM5x6qC18CvtcIMdnN+UU=
-github.com/AndroidStudyOpenSource/mpesa-api-go v0.0.0-20180816092044-d8cf14ef35d3/go.mod h1:9JBv7Xzpx6vrfHoPj1kHB8fmnLkm5QF3pZbXTS0SAt8=
 github.com/aws/aws-lambda-go v1.6.0 h1:T+u/g79zPKw1oJM7xYhvpq7i4Sjc0iVsXZUaqRVVSOg=
 github.com/aws/aws-lambda-go v1.6.0/go.mod h1:zUsUQhAUjYzR8AuduJPCfhBuKWUaDbQiPOG+ouzmE1A=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
