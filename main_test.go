@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/stretchr/testify/assert"
 	"net/url"
@@ -31,6 +32,13 @@ func TestSendRequest(t *testing.T) {
 }
 
 func TestHandler(t *testing.T) {
+	body := map[string]string{
+		"BillRefNumber": "mwasdorcas.sla",
+		"TransID":       "NC3697Q9P0_1234",
+		"TransAmount":   "5",
+		"MSISDN":        "254703488092",
+	}
+	jsonString, _ := json.Marshal(body)
 
 	tests := []struct {
 		request events.APIGatewayProxyRequest
@@ -40,7 +48,7 @@ func TestHandler(t *testing.T) {
 		{
 			// Test that the handler responds with the correct response
 			// when a valid name is provided in the HTTP body
-			request: events.APIGatewayProxyRequest{Body: "Paul"},
+			request: events.APIGatewayProxyRequest{Body: string(jsonString)},
 			expect:  "",
 			err:     nil,
 		},

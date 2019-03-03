@@ -50,7 +50,7 @@ func getMpesaRecipientService(suffixAccount string) (ServiceConfig, error) {
 func sendRequest(serviceConfig ServiceConfig, body map[string]interface{}) (map[string]interface{}, int, error) {
 
 	client := http.Client{
-		Timeout: time.Duration(5 * time.Second),
+		Timeout: time.Duration(10 * time.Second),
 	}
 
 	var requestBody *bytes.Buffer
@@ -122,16 +122,23 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	account := billRefAsArray[len(billRefAsArray)-1]
 
 	// now get the mpesa service to forward the request
-	serviceUrl, err := getMpesaRecipientService(account)
+	serviceConfig, err := getMpesaRecipientService(account)
 
 	if err != nil {
 		log.Print("err:", err)
 		return gatewayResponse, nil
 	}
 
-	log.Print("sending request", "url", serviceUrl, "body", jsonBody)
-	response, statusCode, err := sendRequest(serviceUrl, jsonBody)
-	log.Print("response:", response, "statusCode:", statusCode, "err:", err)
+	// Setting mpesa details
+	jsonBody["mpesa_account_name"] = billRefNumber
+	jsonBody["mpesa_code"] = jsonBody["TransID"]
+	jsonBody["mpesa_id"] = jsonBody["TransID"]
+	jsonBody["mpesa_amount"] = jsonBody["TransAmount"]
+	jsonBody["mpesa_sender_number"] = jsonBody["MSISDN"]
+
+	log.Print("sending request url: ", serviceConfig, " body: ", jsonBody)
+	response, statusCode, err := sendRequest(serviceConfig, jsonBody)
+	log.Print("response: ", response, "statusCode:", statusCode, "err:", err)
 	return gatewayResponse, nil
 }
 
